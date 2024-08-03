@@ -1,0 +1,37 @@
+﻿@model Dictionary<string, string>;
+
+@{
+
+    ///generate query string to sort people
+    string generateQueryString(string sortBy)
+    {
+
+        string sortOrder;
+        if(ViewBag.CurrentSortBy != sortBy)
+        {
+            sortOrder = SortOrderOptions.ASC.ToString();
+        }
+        else
+        {
+            sortOrder = ViewBag.CurrentSortOrder == SortOrderOptions.ASC ? SortOrderOptions.DESC.ToString() : SortOrderOptions.ASC.ToString();
+            
+        }
+
+        return $"?filterBy={ViewBag.CurrentFilterBy}&filterSearch={ViewBag.CurrentFilterSearch}&sortBy={sortBy}&sortOrder={sortOrder}";
+
+    }
+}
+
+
+
+<th>
+    <a href="~/persons/index@(generateQueryString(Model["ColumnName"]))">
+        @Model["DisplayName"]
+        @if (ViewBag.CurrentSortBy == Model["ColumnName"])
+        {
+            <i class="fas fa-sort-@(ViewBag.CurrentSortOrder == SortOrderOptions.ASC ? "up" : "down")"></i>
+        }
+
+    </a>
+
+</th>
