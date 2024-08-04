@@ -33,7 +33,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("14/10/2010"),
                         Email = "feadon0@mlb.com",
                         Gender = "Male",
-                        ReceiveNewsLetters = true
+                        ReceiveNewsLetters = true,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
 
                      new Person() {
@@ -43,7 +44,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("11/04/2020"),
                         Email = "zgayden1@printfriendly.com",
                         Gender = "Female",
-                        ReceiveNewsLetters = true
+                        ReceiveNewsLetters = true,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                         new Person() {
                             PersonId = Guid.Parse("8c775cdb-bcae-4a5a-94f7-ec13338fba65"),
@@ -52,7 +54,8 @@ namespace Services
                             DateOfBirth = DateTime.Parse("27/01/2015"),
                             Email = "raughtie2@mtv.com",
                             Gender = "Female",
-                            ReceiveNewsLetters = false
+                            ReceiveNewsLetters = false,
+                            CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                         },
                     new Person() {
                         PersonId = Guid.Parse("798d5d97-989d-43e7-bc59-ddd87124152f"),
@@ -61,7 +64,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("19/05/2015"),
                         Email = "fdonan3@statcounter.com",
                         Gender = "Male",
-                        ReceiveNewsLetters = false
+                        ReceiveNewsLetters = false,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("d3f276a4-f5ea-44ef-b9ab-34db0efc9615"),
@@ -70,7 +74,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("15/07/1998"),
                         Email = "gmacandreis4@themeforest.net",
                         Gender = "Female",
-                        ReceiveNewsLetters = false
+                        ReceiveNewsLetters = false,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("bf16de25-6ce3-4b3d-901c-1d0419a7d136"),
@@ -79,7 +84,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("09/03/2002"),
                         Email = "ogriffe5@whitehouse.gov",
                         Gender = "Male",
-                        ReceiveNewsLetters = true
+                        ReceiveNewsLetters = true,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("3d2f8cf6-43d9-4d09-bcc5-7bffbdfe497f"),
@@ -88,7 +94,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("09/02/2009"),
                         Email = "bkingdon6@weather.com",
                         Gender = "Female",
-                        ReceiveNewsLetters = false
+                        ReceiveNewsLetters = false,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("4f56539a-9e3f-42dd-b5c8-7ccd0c572a55"),
@@ -97,7 +104,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("04/09/2004"),
                         Email = "mkitchingham7@creativecommons.org",
                         Gender = "Male",
-                        ReceiveNewsLetters = true
+                        ReceiveNewsLetters = true,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("3d61b135-3aab-4503-b2bc-434e38d1da58"),
@@ -106,7 +114,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("18/01/1993"),
                         Email = "maloway8@webnode.com",
                         Gender = "Female",
-                        ReceiveNewsLetters = false
+                        ReceiveNewsLetters = false,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     },
                     new Person() {
                         PersonId = Guid.Parse("13fe2c31-f2d0-4503-b84d-904cc2b63ee3"),
@@ -115,7 +124,8 @@ namespace Services
                         DateOfBirth = DateTime.Parse("05/11/1991"),
                         Email = "bstringfellow9@tinyurl.com",
                         Gender = "Female",
-                        ReceiveNewsLetters = false
+                        ReceiveNewsLetters = false,
+                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
                     }
 
                 };
@@ -123,6 +133,13 @@ namespace Services
 
             }
 
+        }
+
+        public PersonResponse ConverToPersonResponse(Person person)
+        {
+            PersonResponse personResponse = person.ToPersonResponse();
+            personResponse.CountryName = _CountriesService.GetCountryById(person.CountryId)?.CountryName;
+            return personResponse;  
         }
         public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
         {
@@ -167,7 +184,7 @@ namespace Services
 
         public List<PersonResponse> GetAllPersons()
         {
-            return _listPerson.Select(p => p.ToPersonResponse()).ToList();
+            return _listPerson.Select(p => ConverToPersonResponse(p)).ToList();
         }
 
         public PersonResponse? GetPersonByPersonId(Guid? personId)

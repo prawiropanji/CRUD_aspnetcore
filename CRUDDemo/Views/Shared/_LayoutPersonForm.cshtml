@@ -1,9 +1,8 @@
 ﻿@model PersonAddRequest
 
 @{
-    ViewBag.Title = "Create Person";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 
 @section Scripts {
     <script asp-fallback-test="jQuery" asp-fallback-src="~/jquery-3.7.1.min.map" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -14,10 +13,10 @@
 
 
 <a href="~/persons/index" class="link-hover">Back to Persons List</a>
-<h2>Create Person</h2>
+@RenderBody()
 
 <div class="w-50">
-    <form asp-controller="Persons" asp-action="Create" method="post" enctype="application/x-www-form-urlencoded">
+    <form asp-controller="Persons" asp-action="@ViewBag.FormAction" method="post" enctype="application/x-www-form-urlencoded">
 
         @*PersonName*@
         <div class="form-field flex">
@@ -135,7 +134,7 @@
             </div>
             <div class="flex-1">
 
-                <button class="button button-green-back">Create</button>
+                @RenderSection("SubmitButton", false)
 
                 <div class="text-red" asp-validation-summary="All">
                 </div>

@@ -20,6 +20,7 @@ namespace ServiceContracts.DTO
         [Required]
         [EmailAddress(ErrorMessage = "Email is not valid")]
         public string? Email { get; set; }
+        [DataType(DataType.Date)]
         public DateTime? DateOfBirth { get; set; }
         public GenderOptions? Gender { get; set; }
         public Guid? CountryId { get; set; }

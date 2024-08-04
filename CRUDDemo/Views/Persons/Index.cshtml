@@ -8,6 +8,8 @@
 <form action="~/persons/index" method="get">
     <h1>Persons</h1>
 
+    <a href="~/persons/create">Create Person</a>
+
     <div class="box flex">
 
         <div class="flex-1">
@@ -84,7 +86,11 @@
                 {"ColumnName",  nameof(PersonResponse.ReceiveNewsLetters)},
                 {"DisplayName", "Recieve News Letters"}
                 })
-               
+
+                <th>
+                    Options
+                </th>
+
             </tr>
         </thead>
         <tbody>
@@ -99,6 +105,15 @@
                     <td>@person.CountryName</td>
                     <td>@person.Address</td>
                     <td>@person.ReceiveNewsLetters</td>
+                    <td>
+                        <a  asp-controller="Persons" asp-action="Edit" asp-route-personId="@person.PersonId.ToString()">
+                            Edit
+                        </a>
+                        <a asp-controller="Persons" asp-action="Delete" asp-route-personId="@person.PersonId.ToString()">
+                            Delete
+                        </a>
+
+                    </td>
                 </tr>
             }
         </tbody>
