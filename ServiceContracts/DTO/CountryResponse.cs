@@ -1,23 +1,17 @@
 ﻿using Entities;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ServiceContracts.DTO
 {
     public class CountryResponse
     {
-        public Guid Id { get; set; }
+        public Guid CountryId { get; set; }
         public string? CountryName { get; set; }
 
         public override bool Equals(object? obj)
         {
             if (obj == null) return false;
             var countryResponse = (CountryResponse)obj;
-            if (this.Id != countryResponse.Id || this.CountryName != countryResponse.CountryName)
+            if (this.CountryId != countryResponse.CountryId || this.CountryName != countryResponse.CountryName)
             {
 
                 return false;
@@ -39,7 +33,7 @@ namespace ServiceContracts.DTO
         {
             CountryResponse response = new CountryResponse()
             {
-                Id = country.Id,
+                CountryId = country.CountryId,
                 CountryName = country.CountryName,
             };
             return response;

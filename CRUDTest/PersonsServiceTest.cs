@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit.Sdk;
 using Xunit.Abstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace CRUDTest
 {
@@ -19,8 +20,8 @@ namespace CRUDTest
         private readonly ITestOutputHelper _testOutputHelper;
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
-            _personService = new PersonsService(false);
-            _countryService = new CountryService();
+            _countryService = new CountryService(new Entities.PersonDbContext(new DbContextOptionsBuilder().Options));
+            _personService = new PersonsService(new Entities.PersonDbContext(new DbContextOptionsBuilder().Options), _countryService);
             _testOutputHelper = testOutputHelper;
         }
         #region Add Person Service
@@ -60,7 +61,7 @@ namespace CRUDTest
         {
             //Arange
             CountryResponse countryResponse = _countryService.AddCountry(new() { CountryName = "indonesia" });
-            Guid countryId = countryResponse.Id;
+            Guid countryId = countryResponse.CountryId;
 
             PersonAddRequest? personAddRequest = new PersonAddRequest() { PersonName = "testName", Address = "jl kupag", CountryId = countryId, DateOfBirth = DateTime.Parse("2001-01-02"), Email = "test@mail.com", Gender = GenderOptions.Male, ReceiveNewsLetters = false };
 
@@ -100,7 +101,7 @@ namespace CRUDTest
             PersonResponse person_from_add = _personService.AddPerson(new()
             {
                 Address = "jl siliwangi",
-                CountryId = country_from_add.Id,
+                CountryId = country_from_add.CountryId,
                 DateOfBirth = DateTime.Parse("2002-09-09"),
                 PersonName = "nanda",
                 Email = "nanda@mail.com",
@@ -143,7 +144,7 @@ namespace CRUDTest
             PersonAddRequest person1 = new PersonAddRequest() {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -154,7 +155,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambang",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -166,7 +167,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -220,7 +221,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -231,7 +232,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -243,7 +244,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -286,7 +287,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -297,7 +298,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -309,7 +310,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -364,7 +365,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -375,7 +376,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -387,7 +388,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -426,7 +427,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -437,7 +438,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -449,7 +450,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -510,7 +511,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -521,7 +522,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -533,7 +534,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -582,7 +583,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -593,7 +594,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -605,7 +606,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -653,7 +654,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -664,7 +665,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -676,7 +677,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,
@@ -752,7 +753,7 @@ namespace CRUDTest
             {
                 PersonName = "Sisil",
                 Address = "slipi",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1980-01-06"),
                 Email = "sisil@gmail.com",
                 Gender = GenderOptions.Female,
@@ -763,7 +764,7 @@ namespace CRUDTest
             {
                 PersonName = "Bambanag",
                 Address = "klender",
-                CountryId = ukCountry.Id,
+                CountryId = ukCountry.CountryId,
                 DateOfBirth = DateTime.Parse("1990-07-16"),
                 Email = "bambang@gmail.com",
                 Gender = GenderOptions.Male,
@@ -775,7 +776,7 @@ namespace CRUDTest
             {
                 PersonName = "Hana",
                 Address = "kuningan",
-                CountryId = usaCountry.Id,
+                CountryId = usaCountry.CountryId,
                 DateOfBirth = DateTime.Parse("2000-01-15"),
                 Email = "hama@gmail.com",
                 Gender = GenderOptions.Female,

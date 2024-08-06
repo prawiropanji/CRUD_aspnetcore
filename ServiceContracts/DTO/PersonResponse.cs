@@ -98,6 +98,7 @@ namespace ServiceContracts.DTO
                 DateOfBirth = person.DateOfBirth,
                 Gender = person.Gender,
                 CountryId = person.CountryId,
+                CountryName = person.country?.CountryName,
                 Address = person.Address,
                 ReceiveNewsLetters = person.ReceiveNewsLetters,
                 Age = person.DateOfBirth is not null ? Convert.ToInt32(Math.Round((DateTime.Now - person.DateOfBirth).Value.TotalDays / 365.25)) : null

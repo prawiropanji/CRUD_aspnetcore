@@ -1,4 +1,5 @@
-﻿using ServiceContracts.DTO;
+﻿using Microsoft.EntityFrameworkCore;
+using ServiceContracts.DTO;
 using Services;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,7 @@ namespace CRUDTest
         private readonly CountryService _countryService;
         public CountryTest()
         {
-            _countryService = new CountryService(false);
+            _countryService = new CountryService(new Entities.PersonDbContext(new DbContextOptionsBuilder().Options));
         }
         #region Add Country
         //When CountryAddRequest is null, it should throw exception ArgumentNullException
@@ -81,7 +82,7 @@ namespace CRUDTest
 
             //Assert
             Assert.Contains(countryResponse, _countryService.GetListCountries());
-            Assert.True(countryResponse.Id != Guid.Empty);
+            Assert.True(countryResponse.CountryId != Guid.Empty);
         }
 
         #endregion
@@ -156,7 +157,7 @@ namespace CRUDTest
         {
             //Arange 
             CountryResponse newAdded =  _countryService.AddCountry(new CountryAddRequest() { CountryName = "Australia" });
-            Guid id = newAdded.Id;
+            Guid id = newAdded.CountryId;
 
             //Act
             CountryResponse? response = _countryService.GetCountryById(id);

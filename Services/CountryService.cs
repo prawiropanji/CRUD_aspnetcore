@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
@@ -8,44 +9,17 @@ namespace Services
     public class CountryService : ICountriesService
     {
 
-        private readonly List<Country> _countries;
+        private readonly PersonDbContext _db;
 
-        public CountryService(bool initialize = true)
+        public CountryService(PersonDbContext personDbContext)
         {
-            _countries = new List<Country>();
+            _db = personDbContext;
 
-            if (initialize)
-            {
-                _countries = new List<Country> {
-                    new Country()
-                    {
-                        Id = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E"),
-                        CountryName = "Argentina"
-                    },
-
-                    new Country()
-                    {
-                        Id = Guid.Parse("E7E71C8F-7E20-4481-A956-A953203216CA"),
-                        CountryName = "Japan" 
-                    },
-                    new Country()
-                    {
-                        Id = Guid.Parse("D9E788C5-37A0-4973-814E-FE5C05AE92B2"),
-                        CountryName = "Indonesia" 
-                    },
-                    new Country()
-                    {
-                        Id = Guid.Parse("B3EB75FE-9783-46F4-89DE-865CAFAAEDE1"),
-                        CountryName = "Australia" 
-                    }
-
-
-                };
-            }
+           
 
         }
 
-        public CountryResponse AddCountry(CountryAddRequest? newCountry)
+        public async Task<CountryResponse> AddCountry(CountryAddRequest? newCountry)
         {
             if (newCountry == null)
             {
@@ -55,21 +29,23 @@ namespace Services
             ValidationHelper.ValidateObject(newCountry);
 
 
-            if (_countries.Any(country => country.CountryName == newCountry.CountryName))
+            if (_db.Countries.Any(country => country.CountryName == newCountry.CountryName))
             {
                 throw new ArgumentException("given country name already exist in list countries", nameof(newCountry.CountryName));
             }
 
             Country country = newCountry.ToCountry();
-            country.Id = Guid.NewGuid();
-            _countries.Add(country);
+            country.CountryId = Guid.NewGuid();
+            await _db.Countries.AddAsync(country);
+            await _db.SaveChangesAsync();
+          
 
             CountryResponse countryResponse = country.ToCountryResponse();
 
             return countryResponse;
         }
 
-        public CountryResponse? GetCountryById(Guid? countryId)
+        public async Task<CountryResponse?> GetCountryById(Guid? countryId)
         {
             if (countryId == null)
             {
@@ -77,7 +53,7 @@ namespace Services
             }
 
 
-            Country? country = _countries.FirstOrDefault(c => c.Id == countryId);
+            Country? country = await _db.Countries.FirstOrDefaultAsync(c => c.CountryId == countryId);
 
             if (country is null)
             {
@@ -88,9 +64,10 @@ namespace Services
 
         }
 
-        public List<CountryResponse> GetListCountries()
+        public async Task<List<CountryResponse>> GetListCountries()
         {
-            List<CountryResponse> countryResponses = this._countries.Select(country => country.ToCountryResponse()).ToList();
+            List<Country> countries = await this._db.Countries.Include(p => p.Persons).ToListAsync();
+            List<CountryResponse> countryResponses = countries.Select(country => country.ToCountryResponse()).ToList();
             return countryResponses;
         }
 

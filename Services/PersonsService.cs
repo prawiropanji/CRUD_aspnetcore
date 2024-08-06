@@ -1,4 +1,5 @@
 ﻿using Entities;
+using Microsoft.EntityFrameworkCore;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -14,134 +15,24 @@ namespace Services
 {
     public class PersonsService : IPersonsService
     {
-        private readonly List<Person> _listPerson;
+        private readonly PersonDbContext _db;
         private readonly ICountriesService _CountriesService;
-        public PersonsService(bool initialize = true)
+        public PersonsService(PersonDbContext personDbContext, ICountriesService countriesService)
         {
-            _listPerson = new List<Person>();
-            _CountriesService = new CountryService();
+            _db = personDbContext;
+            _CountriesService = countriesService;
 
 
-            if (initialize)
-            {
-                //create mock data
-                _listPerson = new List<Person>() {
-                    new Person() {
-                        PersonId = Guid.Parse("17d5b155-46b7-4d91-928f-89f79d7d30dc"),
-                        PersonName = "Fairfax",
-                        Address = "5 Fuller Trail",
-                        DateOfBirth = DateTime.Parse("14/10/2010"),
-                        Email = "feadon0@mlb.com",
-                        Gender = "Male",
-                        ReceiveNewsLetters = true,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-
-                     new Person() {
-                        PersonId = Guid.Parse("89ebb632-a89b-4e50-8692-0d52d5e59c09"),
-                        PersonName = "Zuzana",
-                        Address = "07 Anzinger Pass",
-                        DateOfBirth = DateTime.Parse("11/04/2020"),
-                        Email = "zgayden1@printfriendly.com",
-                        Gender = "Female",
-                        ReceiveNewsLetters = true,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                        new Person() {
-                            PersonId = Guid.Parse("8c775cdb-bcae-4a5a-94f7-ec13338fba65"),
-                            PersonName = "Rory",
-                            Address = "1968 Clarendon Junction",
-                            DateOfBirth = DateTime.Parse("27/01/2015"),
-                            Email = "raughtie2@mtv.com",
-                            Gender = "Female",
-                            ReceiveNewsLetters = false,
-                            CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                        },
-                    new Person() {
-                        PersonId = Guid.Parse("798d5d97-989d-43e7-bc59-ddd87124152f"),
-                        PersonName = "Friedrick",
-                        Address = "0705 John Wall Road",
-                        DateOfBirth = DateTime.Parse("19/05/2015"),
-                        Email = "fdonan3@statcounter.com",
-                        Gender = "Male",
-                        ReceiveNewsLetters = false,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("d3f276a4-f5ea-44ef-b9ab-34db0efc9615"),
-                        PersonName = "Gabrielle",
-                        Address = "25849 Ridge Oak Crossing",
-                        DateOfBirth = DateTime.Parse("15/07/1998"),
-                        Email = "gmacandreis4@themeforest.net",
-                        Gender = "Female",
-                        ReceiveNewsLetters = false,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("bf16de25-6ce3-4b3d-901c-1d0419a7d136"),
-                        PersonName = "Ossie",
-                        Address = "01253 Mosinee Street",
-                        DateOfBirth = DateTime.Parse("09/03/2002"),
-                        Email = "ogriffe5@whitehouse.gov",
-                        Gender = "Male",
-                        ReceiveNewsLetters = true,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("3d2f8cf6-43d9-4d09-bcc5-7bffbdfe497f"),
-                        PersonName = "Bobette",
-                        Address = "8787 Springview Park",
-                        DateOfBirth = DateTime.Parse("09/02/2009"),
-                        Email = "bkingdon6@weather.com",
-                        Gender = "Female",
-                        ReceiveNewsLetters = false,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("4f56539a-9e3f-42dd-b5c8-7ccd0c572a55"),
-                        PersonName = "Marion",
-                        Address = "4480 Delaware Trail",
-                        DateOfBirth = DateTime.Parse("04/09/2004"),
-                        Email = "mkitchingham7@creativecommons.org",
-                        Gender = "Male",
-                        ReceiveNewsLetters = true,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("3d61b135-3aab-4503-b2bc-434e38d1da58"),
-                        PersonName = "Michaeline",
-                        Address = "6 Lindbergh Circle",
-                        DateOfBirth = DateTime.Parse("18/01/1993"),
-                        Email = "maloway8@webnode.com",
-                        Gender = "Female",
-                        ReceiveNewsLetters = false,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    },
-                    new Person() {
-                        PersonId = Guid.Parse("13fe2c31-f2d0-4503-b84d-904cc2b63ee3"),
-                        PersonName = "Billie",
-                        Address = "77 Shelley Circle",
-                        DateOfBirth = DateTime.Parse("05/11/1991"),
-                        Email = "bstringfellow9@tinyurl.com",
-                        Gender = "Female",
-                        ReceiveNewsLetters = false,
-                        CountryId = Guid.Parse("5C1C7726-80D9-4083-8950-1DB8C5C7E49E")
-                    }
-
-                };
-
-
-            }
+          
 
         }
 
         public PersonResponse ConverToPersonResponse(Person person)
         {
             PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.CountryName = _CountriesService.GetCountryById(person.CountryId)?.CountryName;
             return personResponse;  
         }
-        public PersonResponse AddPerson(PersonAddRequest? personAddRequest)
+        public async Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest)
         {
             if (personAddRequest == null)
             {
@@ -155,46 +46,61 @@ namespace Services
 
             Person person = personAddRequest.ToPerson();
             person.PersonId = Guid.NewGuid();
-            _listPerson.Add(person);
+            await _db.Persons.AddAsync(person);
+            await _db.SaveChangesAsync();
+            //_db.sp_InsertPerson(person);
 
 
             PersonResponse personResponse = person.ToPersonResponse();
-            personResponse.CountryName = _CountriesService.GetCountryById(personResponse.CountryId)?.CountryName;
+            //personResponse.CountryName = await _CountriesService.GetCountryById(personResponse.CountryId)?.CountryName;
             return personResponse;
 
 
         }
 
-        public bool DeletePerson(Guid? personId)
+        public async Task<bool> DeletePerson(Guid? personId)
         {
-            if (personId == null)
+            if (personId is null)
             {
                 return false;
             }
 
-            var deletedPersons = _listPerson.RemoveAll(p => p.PersonId == personId);
-            if (deletedPersons == 0)
+
+            Person? person = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
+            if (person is null) {
+                return false;
+            }
+
+           
+
+            var deletedPersons = _db.Persons.Remove(person);
+            if (deletedPersons is null)
             {
                 return false;
             }
+
+            await _db.SaveChangesAsync();
 
             return true;
 
         }
 
-        public List<PersonResponse> GetAllPersons()
+        public async Task<List<PersonResponse>> GetAllPersons()
         {
-            return _listPerson.Select(p => ConverToPersonResponse(p)).ToList();
+            //return _db.Sp_GetAllPersons().Select(p => ConverToPersonResponse(p)).ToList();
+            List<Person> persons = await _db.Persons.Include(p => p.country).ToListAsync();
+            return persons.Select((p) =>  ConverToPersonResponse(p)).ToList();
+
         }
 
-        public PersonResponse? GetPersonByPersonId(Guid? personId)
+        public async Task<PersonResponse?> GetPersonByPersonId(Guid? personId)
         {
             if (personId == null)
             {
                 throw new ArgumentNullException(nameof(personId));
             }
 
-            Person? person = _listPerson.FirstOrDefault(p => p.PersonId == personId);
+            Person? person = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personId);
             if (person == null)
             {
                 return null;
@@ -204,9 +110,9 @@ namespace Services
 
         }
 
-        public List<PersonResponse> GetPersonsByFilter(string? filterBy, string? filterSearch)
+        public async Task<List<PersonResponse>> GetPersonsByFilter(string? filterBy, string? filterSearch)
         {
-            List<PersonResponse> listPersons = GetAllPersons();
+            List<PersonResponse> listPersons = await GetAllPersons();
             if (string.IsNullOrEmpty(filterSearch) || string.IsNullOrEmpty(filterBy))
             {
                 return listPersons;
@@ -241,7 +147,7 @@ namespace Services
                 case nameof(PersonResponse.CountryName):
                     listPersons = listPersons.Where((p) =>
                     {
-                        return (!string.IsNullOrEmpty(p.CountryName)) ? p.CountryName.Contains(filterBy, StringComparison.OrdinalIgnoreCase) : true;
+                        return (!string.IsNullOrEmpty(p.CountryName)) ? p.CountryName.Contains(filterSearch, StringComparison.OrdinalIgnoreCase) : true;
                     }).ToList();
                     break;
 
@@ -277,7 +183,7 @@ namespace Services
             return sorted_persons;
         }
 
-        public PersonResponse UpdatePerson(PersonUpdateRequest? personUpdateRequest)
+        public async Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest)
         {
             if (personUpdateRequest == null)
             {
@@ -288,22 +194,23 @@ namespace Services
             ValidationHelper.ValidateObject(personUpdateRequest);
 
 
-            int found_index = _listPerson.FindIndex(p => p.PersonId == personUpdateRequest.PersonId);
-            if (found_index < 0)
+            Person? person_found = await _db.Persons.FirstOrDefaultAsync(p => p.PersonId == personUpdateRequest.PersonId);
+            if (person_found is null )
             {
                 throw new ArgumentException($"Person with PersonId {personUpdateRequest.PersonId} was not found");
             }
 
+            person_found.PersonName = personUpdateRequest.PersonName;
+            person_found.Email = personUpdateRequest.Email;
+            person_found.DateOfBirth = personUpdateRequest.DateOfBirth;
+            person_found.Gender = personUpdateRequest.Gender.ToString();
+            person_found.CountryId = personUpdateRequest.CountryId;
+            person_found.Address = personUpdateRequest.Address;
+            person_found.ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
 
-            _listPerson[found_index].PersonName = personUpdateRequest.PersonName;
-            _listPerson[found_index].Email = personUpdateRequest.Email;
-            _listPerson[found_index].DateOfBirth = personUpdateRequest.DateOfBirth;
-            _listPerson[found_index].Gender = personUpdateRequest.Gender.ToString();
-            _listPerson[found_index].CountryId = personUpdateRequest.CountryId;
-            _listPerson[found_index].Address = personUpdateRequest.Address;
-            _listPerson[found_index].ReceiveNewsLetters = personUpdateRequest.ReceiveNewsLetters;
+            await _db.SaveChangesAsync();
 
-            return _listPerson[found_index].ToPersonResponse();
+            return person_found.ToPersonResponse();
 
 
         }

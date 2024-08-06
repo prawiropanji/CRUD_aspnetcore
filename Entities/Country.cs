@@ -1,9 +1,16 @@
-﻿namespace Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Entities
 {
     public class Country
     {
-        public Guid Id { get; set; }
+        [Key]
+        public Guid CountryId { get; set; }
+        [StringLength(56)]
         public string? CountryName { get; set; } 
+
+        public ICollection<Person>? Persons{ get; set; }
+
     }
 
 
