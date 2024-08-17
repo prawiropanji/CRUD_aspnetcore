@@ -12,6 +12,12 @@ namespace ServiceContracts
          Task<List<CountryResponse>> GetListCountries();
 
         Task<CountryResponse?> GetCountryById(Guid? countryId);
+        /// <summary>
+        /// Add new countries by upload file excel
+        /// </summary>
+        /// <param name="memoryStream">memory stream with excel content</param>
+        /// <returns>numbers of added row</returns>
+        Task<Response<int>> AddCountryExcelFile(MemoryStream memoryStream);
 
     }
 }

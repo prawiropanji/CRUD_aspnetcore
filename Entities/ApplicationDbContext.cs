@@ -13,12 +13,12 @@ using Azure.Identity;
 
 namespace Entities
 {
-    public class PersonDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
+        public virtual DbSet<Country> Countries { get; set; }
 
-        public PersonDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions options) : base(options)
         {
 
         }

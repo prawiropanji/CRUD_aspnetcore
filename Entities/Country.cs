@@ -7,6 +7,7 @@ namespace Entities
         [Key]
         public Guid CountryId { get; set; }
         [StringLength(56)]
+        [Required]
         public string? CountryName { get; set; } 
 
         public ICollection<Person>? Persons{ get; set; }

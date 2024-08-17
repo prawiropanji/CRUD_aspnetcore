@@ -150,6 +150,24 @@ namespace CRUDDemo.Controllers
         }
 
 
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetPersonsCSV()
+        {
+            MemoryStream memoryStream =  await _personsService.GetPersonsCSV();
+            return File(memoryStream, "text/csv", "persons.csv");
+        }
+
+
+        [HttpGet]
+        [Route("[action]")]
+        public async Task<IActionResult> GetPersonsXlsx()
+        {
+            MemoryStream memoryStream = await _personsService.GetPersonsXlsx();
+            return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "persons.xlsx");
+        }
+
+
 
     }
 }
