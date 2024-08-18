@@ -1,6 +1,7 @@
 ﻿using CsvHelper;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using RepositoryContracts;
@@ -22,10 +23,12 @@ namespace Services
     public class PersonsService : IPersonsService
     {
         private readonly IPersonsRepository _personsRepository;
-        public PersonsService(IPersonsRepository personsRepository)
+        private readonly ILogger<PersonsService> _logger;
+
+        public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger)
         {
             _personsRepository = personsRepository;
-
+            _logger = logger;
         }
 
         public PersonResponse ConverToPersonResponse(Person person)
@@ -48,7 +51,6 @@ namespace Services
             Person person = personAddRequest.ToPerson();
             person.PersonId = Guid.NewGuid();
             await _personsRepository.AddPerson(person);
-            //_db.sp_InsertPerson(person);
 
 
             PersonResponse personResponse = person.ToPersonResponse();
@@ -104,7 +106,7 @@ namespace Services
 
         public async Task<List<PersonResponse>> GetPersonsByFilter(string? filterBy, string? filterSearch)
         {
-     
+            _logger.LogInformation("Execute GetPersonsByFilter in PersonsService");
 
             List<Person> listPerson = filterBy switch
             {
@@ -128,6 +130,8 @@ namespace Services
 
         public List<PersonResponse> GetSortedPersons(List<PersonResponse> personsToOrder, string sortBy, SortOrderOptions sortOrder)
         {
+            _logger.LogInformation("Execute GetSortedPersons in PersonsService");
+
             List<PersonResponse> sorted_persons = (sortBy, sortOrder) switch
             {
                 (nameof(PersonResponse.PersonName), SortOrderOptions.ASC) => personsToOrder.OrderBy(p => p.PersonName).ToList(),

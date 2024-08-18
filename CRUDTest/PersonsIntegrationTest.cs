@@ -18,7 +18,7 @@ namespace CRUDTest
         }
 
         [Fact]
-        public async Task Persons_IntegrationTest()
+        public async Task Persons_IndexPageReturnViewWithTableElement()
         {
             HttpResponseMessage response = await _client.GetAsync("persons/index");
 

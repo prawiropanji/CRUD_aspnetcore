@@ -30,23 +30,11 @@ namespace CRUDTest
         private readonly IFixture _fixture;
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
-
-            List<Country> listCountry = new List<Country>();
-            List<Person> listPerson = new List<Person>();
-
             //create mock object for repository
             _personRepositoryMock = new Mock<IPersonsRepository>();
             //access actual mocked repository instance
             IPersonsRepository _personRepository = _personRepositoryMock.Object;
-
-            //Create mock for dbcontext
-            var dbContextMock = new DbContextMock<ApplicationDbContext>(new DbContextOptionsBuilder<ApplicationDbContext>().Options);
-            // Access Mock Dbcontext object
-            ApplicationDbContext applicationDbContext = dbContextMock.Object;
-            //Create mocks for DbSets
-            dbContextMock.CreateDbSetMock(temp => temp.Countries, listCountry);
-            dbContextMock.CreateDbSetMock(temp => temp.Persons, listPerson);
-
+            //create service object with mocked repository
             _personService = new PersonsService(_personRepository);
             _testOutputHelper = testOutputHelper;
             _fixture = new Fixture();
@@ -552,14 +540,11 @@ namespace CRUDTest
                 .Create();
 
 
-
-
-
             PersonUpdateRequest? person_update = _fixture.Build<PersonUpdateRequest>()
                 .With(temp => temp.Email, "test@mail.com")
                 .Create();
 
-
+            //mock method person repository UpdatePerson dan GetPersonByPersonId
             _personRepositoryMock.Setup(temp => temp.UpdatePerson(It.IsAny<Person>())).ReturnsAsync(person);
             _personRepositoryMock.Setup(temp => temp.GetPersonByPersonId(It.IsAny<Guid>())).ReturnsAsync(person);
 
@@ -569,8 +554,6 @@ namespace CRUDTest
 
 
             //Assert
-            //Assert.Equal(person_expected, updated_person_actual);
-
             updated_person_actual.Should().BeEquivalentTo(person.ToPersonResponse());
 
         }
