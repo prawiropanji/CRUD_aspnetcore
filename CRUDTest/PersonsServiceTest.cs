@@ -18,24 +18,37 @@ using AutoFixture.Kernel;
 using Moq;
 using RepositoryContracts;
 using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace CRUDTest
 {
     public class PersonsServiceTest
     {
         private readonly IPersonsService _personService;
+        private readonly ILogger<PersonsService> _loggerService;
+        private readonly IDiagnosticContext _diagnosticService;
+
         private readonly ITestOutputHelper _testOutputHelper;
         private readonly Mock<IPersonsRepository> _personRepositoryMock;
+        private readonly Mock<ILogger<PersonsService>> _loggerMock;
+        private readonly Mock<IDiagnosticContext> _diagnosticMock;
 
         private readonly IFixture _fixture;
         public PersonsServiceTest(ITestOutputHelper testOutputHelper)
         {
             //create mock object for repository
             _personRepositoryMock = new Mock<IPersonsRepository>();
+            _loggerMock = new Mock<ILogger<PersonsService>>();
+            _diagnosticMock = new Mock<IDiagnosticContext>();
+
             //access actual mocked repository instance
             IPersonsRepository _personRepository = _personRepositoryMock.Object;
+            ILogger<PersonsService> _logger = _loggerMock.Object;
+            IDiagnosticContext _diagnostic = _diagnosticMock.Object;
+
             //create service object with mocked repository
-            _personService = new PersonsService(_personRepository);
+            _personService = new PersonsService(_personRepository, _logger, _diagnostic);
             _testOutputHelper = testOutputHelper;
             _fixture = new Fixture();
 

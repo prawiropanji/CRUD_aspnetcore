@@ -1,7 +1,9 @@
 ﻿using AutoFixture;
+using Castle.Core.Logging;
 using CRUDDemo.Controllers;
 using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ServiceContracts;
 using ServiceContracts.DTO;
@@ -18,6 +20,7 @@ namespace CRUDTest
     {
         private readonly Mock<IPersonsService> _personsServiceMock;
         private readonly Mock<ICountriesService> _countiesServiceMock;
+        private readonly Mock<ILogger<PersonsController>> _loggerServiceMock;
         private readonly PersonsController _personsController;
         private readonly IFixture _fixture;
         public PersonsControllerTest()
@@ -25,11 +28,13 @@ namespace CRUDTest
             _fixture = new Fixture();
             _personsServiceMock = new Mock<IPersonsService>();
             _countiesServiceMock = new Mock<ICountriesService>();
+            _loggerServiceMock = new Mock<ILogger<PersonsController>>();
 
             IPersonsService _personsService = _personsServiceMock.Object;
             ICountriesService _countriesService = _countiesServiceMock.Object;
+            ILogger<PersonsController> loggerService = _loggerServiceMock.Object;
 
-            _personsController = new PersonsController(_personsService, _countriesService);
+            _personsController = new PersonsController(_personsService, _countriesService, loggerService);
         }
 
 

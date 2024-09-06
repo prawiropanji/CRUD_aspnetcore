@@ -4,11 +4,32 @@
     ViewBag.Title = "Delete Person";
 }
 
+<div class="flex">
+    <div class="flex-1 flex">
+        <div class="text-grey">
+            <span>
+                Contact
 
-<a href="~/persons/index" class="link-hover">Back to Persons List</a>
-<h2>Delete Person</h2>
+            </span>
+            <i class="fa-solid fa-caret-right"></i>
+            <span>
+                Persons
+            </span>
+            <i class="fa-solid fa-caret-right"></i>
+            <span>
+                Delete
+            </span>
+        </div>
 
-<div class="w-50">
+    </div>
+
+</div>
+
+
+<div class="form-container">
+    <a href="~/persons/index" class="link-hover">Back to Persons List</a>
+    <h2 class="text-large">Delete Person</h2>
+    <h3>Are you sure to delete this person?</h3>
     <form asp-controller="Persons" asp-action="Delete" method="post" enctype="application/x-www-form-urlencoded">
 
         <input hidden asp-for="PersonId" />
@@ -46,7 +67,7 @@
 
                 <button class="button button-red-back">Delete</button>
 
-               
+
             </div>
         </div>
 

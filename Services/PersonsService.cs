@@ -1,10 +1,13 @@
 ﻿using CsvHelper;
 using Entities;
+using Exceptions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using RepositoryContracts;
+using Serilog;
+using SerilogTimings;
 using ServiceContracts;
 using ServiceContracts.DTO;
 using ServiceContracts.Enums;
@@ -24,11 +27,13 @@ namespace Services
     {
         private readonly IPersonsRepository _personsRepository;
         private readonly ILogger<PersonsService> _logger;
+        private readonly IDiagnosticContext _diagnostic;
 
-        public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger)
+        public PersonsService(IPersonsRepository personsRepository, ILogger<PersonsService> logger, IDiagnosticContext diagnostic)
         {
             _personsRepository = personsRepository;
             _logger = logger;
+            _diagnostic = diagnostic;
         }
 
         public PersonResponse ConverToPersonResponse(Person person)
@@ -108,23 +113,31 @@ namespace Services
         {
             _logger.LogInformation("Execute GetPersonsByFilter in PersonsService");
 
-            List<Person> listPerson = filterBy switch
+
+            List<Person> listPerson;
+            using (Operation.Time("Timming taken for Get Filtered Persons from database"))
             {
-                nameof(PersonResponse.PersonName) =>
-                   await _personsRepository.GetFilteredPersons(p => p.PersonName != null && p.PersonName.Contains(filterSearch)),
-                nameof(PersonResponse.Email) =>
-                   await _personsRepository.GetFilteredPersons(p => p.Email != null && p.Email.Contains(filterSearch)),
-                nameof(PersonResponse.DateOfBirth) =>
-                    await _personsRepository.GetFilteredPersons(p => p.DateOfBirth != null && p.DateOfBirth.Value.ToString("dd MMM yyyy").Contains(filterSearch)),
-                nameof(PersonResponse.Gender) =>
-                    await _personsRepository.GetFilteredPersons(p => p.Gender != null && p.Gender.Contains(filterSearch)),
-                nameof(PersonResponse.CountryName) =>
-                    await _personsRepository.GetFilteredPersons(p => p.country!.CountryName != null && p.country.CountryName.Contains(filterSearch)),
-                _ => await _personsRepository.GetAllPersons()
+                listPerson = filterBy switch
+                {
+                    nameof(PersonResponse.PersonName) =>
+                       await _personsRepository.GetFilteredPersons(p => p.PersonName != null && p.PersonName.Contains(filterSearch)),
+                    nameof(PersonResponse.Email) =>
+                       await _personsRepository.GetFilteredPersons(p => p.Email != null && p.Email.Contains(filterSearch)),
+                    nameof(PersonResponse.DateOfBirth) =>
+                        await _personsRepository.GetFilteredPersons(p => p.DateOfBirth != null && p.DateOfBirth.Value.ToString("dd MMM yyyy").Contains(filterSearch)),
+                    nameof(PersonResponse.Gender) =>
+                        await _personsRepository.GetFilteredPersons(p => p.Gender != null && p.Gender.Contains(filterSearch)),
+                    nameof(PersonResponse.CountryName) =>
+                        await _personsRepository.GetFilteredPersons(p => p.country!.CountryName != null && p.country.CountryName.Contains(filterSearch)),
+                    _ => await _personsRepository.GetAllPersons()
 
-            };
+                };
+            }//end of timming
 
-            return listPerson.Select(p => p.ToPersonResponse()).ToList();
+
+            var persons = listPerson.Select(p => p.ToPersonResponse()).ToList();
+            _diagnostic.Set("Persons", persons);
+            return persons;
             
         }
 
@@ -171,7 +184,7 @@ namespace Services
             Person? person_found = await _personsRepository.GetPersonByPersonId(personUpdateRequest.PersonId);
             if (person_found is null)
             {
-                throw new ArgumentException($"Person with PersonId {personUpdateRequest.PersonId} was not found");
+                throw new InvalidPersonIDException($"Person with PersonId {personUpdateRequest.PersonId} was not found");
             }
 
             person_found.PersonName = personUpdateRequest.PersonName;

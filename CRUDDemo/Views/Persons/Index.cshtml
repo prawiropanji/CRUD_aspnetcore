@@ -6,46 +6,68 @@
 
 
 <form action="~/persons/index" method="get">
-    <h1>Persons</h1>
 
-    <a href="~/persons/create">Create Person</a>
-    <a class="ml" asp-controller="Persons" asp-action="PersonsPdf" target="_blank">Generate PDF</a>
-    <a class="ml" asp-controller="Persons" asp-action="GetPersonsCSV" >Generate CSV</a>
-    <a class="ml" asp-controller="Persons" asp-action="GetPersonsXlsx">Generate Excel</a>
+    <div class="flex">
+        <div class="flex-1 flex">
+            <div class="text-grey">
+                <span>
+                    Contact
 
-    <div class="box flex">
+                </span>
+                <i class="fa-solid fa-caret-right"></i>
+                <span>
+                    Persons
 
-        <div class="flex-1">
-            <select class="form-input" name="filterBy">
-                @foreach (KeyValuePair<string, string> option in ViewBag.FilterByOptions)
-                {
-
-                    if (ViewBag.CurrentFilterBy == option.Key)
-                    {
-                        <option value="@option.Key" selected>
-                            @option.Value
-                        </option>
-                    }
-
-                    {
-                        <option value="@option.Key">
-                            @option.Value
-                        </option>
-                    }
-
-                }
-            </select>
+                </span>
+            </div>
 
         </div>
-        <div class="flex-1">
-            <input type="search" id="Search" class="form-input" placeholder="Search" name="filterSearch" value="@ViewBag.CurrentFilterSearch" />
-        </div>
-        <div class="flex-1">
-            <button class="button button-blue-back">Search</button>
+        <div class="flex-1 text-right">
+
+            <a href="~/persons/create" class="button-link button-blue-back">Create Person</a>
+            <a class="ml button-link button-blue-back" asp-controller="Persons" asp-action="PersonsPdf" target="_blank">Generate PDF</a>
+            <a class="ml button-link button-blue-back" asp-controller="Persons" asp-action="GetPersonsCSV">Generate CSV</a>
+            <a class="ml button-link button-blue-back" asp-controller="Persons" asp-action="GetPersonsXlsx">Generate Excel</a>
+
+
         </div>
     </div>
 
-    <table class="table w-100 mt">
+    <div class="table-container">
+        <div class="flex">
+            <div class="flex1">
+                <h1>Persons</h1>
+            </div>
+            <div class="flex3 text-right">
+                <label>Search by:</label>
+                <select style="width:200px" class="search-dropdown" name="filterBy">
+                    @foreach (KeyValuePair<string, string> option in ViewBag.FilterByOptions)
+                    {
+
+                        if (ViewBag.CurrentFilterBy == option.Key)
+                        {
+                            <option value="@option.Key" selected>
+                                @option.Value
+                            </option>
+                        }
+
+                        {
+                            <option value="@option.Key">
+                                @option.Value
+                            </option>
+                        }
+
+                    }
+                </select>
+
+                <input style="width:200px" type="search" id="Search" class="search-text" placeholder="Search" name="filterSearch" value="@ViewBag.CurrentFilterSearch" />
+
+                <button class="search-button">Search</button>
+
+            </div>
+    </div>
+
+    <table class="table w-100 mt persons">
         <thead>
             <tr>
 
@@ -109,10 +131,10 @@
                     <td>@person.Address</td>
                     <td>@person.ReceiveNewsLetters</td>
                     <td>
-                        <a  asp-controller="Persons" asp-action="Edit" asp-route-personId="@person.PersonId.ToString()">
+                        <a class="button-link button-blue-back" asp-controller="Persons" asp-action="Edit" asp-route-personId="@person.PersonId.ToString()">
                             Edit
                         </a>
-                        <a asp-controller="Persons" asp-action="Delete" asp-route-personId="@person.PersonId.ToString()">
+                            <a class="button-link button-red-back" asp-controller="Persons" asp-action="Delete" asp-route-personId="@person.PersonId.ToString()">
                             Delete
                         </a>
 
@@ -121,5 +143,5 @@
             }
         </tbody>
     </table>
-
+    </div>
 </form>

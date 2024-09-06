@@ -7,54 +7,61 @@ using RepositoryContracts;
 using Repositories;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.HttpLogging;
+using Serilog;
+using CRUDDemo.Filters.ActionFilters;
+using CRUDDemo;
+using CRUDDemo.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 
-builder.Services.AddControllersWithViews();
 
-//configure ILogger Provider
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-if (OperatingSystem.IsWindows())
+//configure serilog
+builder.Host.UseSerilog((HostBuilderContext ctx, IServiceProvider service, LoggerConfiguration loggerConfiguration) =>
 {
-    builder.Logging.AddEventLog();
-}
-
-//add httplogging service to IoC container
-builder.Services.AddHttpLogging(options => {
-    options.LoggingFields = HttpLoggingFields.RequestProperties | HttpLoggingFields.ResponseStatusCode;
+    loggerConfiguration
+        .ReadFrom.Configuration(ctx.Configuration) //its mean serilog configuration is loaded form appsetting.json/appsettings.environment.json
+        .ReadFrom.Services(service); //read services in IoC container and make available to serilog, its mean any serilog sinks can access service if required
 });
 
 
+////configure ILogger Provider 
+//builder.Logging.ClearProviders();
+//builder.Logging.AddConsole();
+//if (OperatingSystem.IsWindows())
+//{
+//    builder.Logging.AddEventLog();
+//}
 
-//add services to IoC container
-builder.Services.AddScoped<IPersonsService, PersonsService>();
-builder.Services.AddScoped<ICountriesService, CountryService>();
+////add httplogging service to IoC container
+//builder.Services.AddHttpLogging(options =>
+//{
+//    options.LoggingFields = HttpLoggingFields.RequestProperties | HttpLoggingFields.ResponseStatusCode;
+//});
 
-//add repositories to IoC container
-builder.Services.AddScoped<IPersonsRepository, PersonsRepository>();
-builder.Services.AddScoped<ICountriesRepository, CountriesRepository>();
 
-//add dbcontext to IoC container
-builder.Services.AddDbContext<ApplicationDbContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.ConfigureServices(builder.Configuration);
 
 
 var app = builder.Build();
 
-app.Logger.LogDebug("level Debug");
-app.Logger.LogInformation("Level Information");
-app.Logger.LogWarning("Level Warning");
-app.Logger.LogError("Level Error");
-app.Logger.LogCritical("Level Critical");
 
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
+else
+{
+    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandlingMiddleware();
+}
 
-app.UseHttpLogging();
+app.UseSerilogRequestLogging();
+
+//app.UseHttpLogging();
+
+
 app.UseRotativa();
 
 

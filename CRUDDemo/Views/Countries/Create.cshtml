@@ -2,27 +2,51 @@
     ViewBag.Title = "Add Country";
 }
 
-<form asp-action="Create" asp-controller="Countries" method="post" enctype="multipart/form-data">
-    <div class="form-field flex">
-        <div class="w-25">
-            <label for="excelFile" class="form-label pt">Add Country File</label>
+<div class="flex">
+    <div class="flex-1 flex">
+        <div class="text-grey">
+            <span>
+                Contact
+
+            </span>
+            <i class="fa-solid fa-caret-right"></i>
+            <span>
+                Countires
+            </span>
+            <i class="fa-solid fa-caret-right"></i>
+            <span>
+                Upload
+            </span>
         </div>
-        <div class="flex-1">
-            <input type="file" id="excelFile" name="excelFile" class="form-input" />
-            <span class="text-red">@ViewBag.ErrorMessage</span>
-        </div>
+
     </div>
 
-    <div class="form-field flex">
-        <div class="w-25">
+</div>
+
+<div class="form-container">
+    <h2 class="text-large">Upload Countries from Excel</h2>
+    <form asp-action="Create" asp-controller="Countries" method="post" enctype="multipart/form-data">
+        <div class="form-field flex">
+            <div class="w-25">
+                <label for="excelFile" class="form-label pt">Add Country File</label>
+            </div>
+            <div class="flex-1">
+                <input type="file" id="excelFile" name="excelFile" class="form-input" />
+                <span class="text-red">@ViewBag.ErrorMessage</span>
+            </div>
         </div>
-        <div class="flex-1">
 
-            <button class="button button-green-back">Upload</button>
-            <span class="text-green">@ViewBag.Message</span>
+        <div class="form-field flex">
+            <div class="w-25">
+            </div>
+            <div class="flex-1">
+
+                <button class="button button-green-back">Upload</button>
+                <span class="text-green">@ViewBag.Message</span>
 
 
+            </div>
         </div>
-    </div>
-    
-</form>
+
+    </form>
+</div>
