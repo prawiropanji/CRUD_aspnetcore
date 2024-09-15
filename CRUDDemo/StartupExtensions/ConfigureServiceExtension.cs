@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Repositories;
 using RepositoryContracts;
 using ServiceContracts;
+using ServiceContracts.DTO;
 using Services;
 
 namespace CRUDDemo
@@ -22,7 +23,12 @@ namespace CRUDDemo
 
 
             //add services to IoC container
-            services.AddScoped<IPersonsService, PersonsService>();
+            services.AddScoped<IPersonsGetterService, PersonsGetterService>();
+            services.AddScoped<IPersonsAdderService, PersonsAdderService>();
+            services.AddScoped<IPersonsDeleterService, PersonsDeleterService>();
+            services.AddScoped<IPersonsSorterService, PersonsSorterService>();
+            services.AddScoped<IPersonsUpdaterService, PersonsUpdaterService>();
+
             services.AddScoped<ICountriesService, CountryService>();
 
             //add repositories to IoC container 

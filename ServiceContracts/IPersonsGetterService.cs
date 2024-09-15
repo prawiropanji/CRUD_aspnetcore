@@ -8,9 +8,8 @@ using ServiceContracts.Enums;
 
 namespace ServiceContracts
 {
-    public interface IPersonsService
+    public interface IPersonsGetterService
     {
-        Task<PersonResponse> AddPerson(PersonAddRequest? personAddRequest);
 
         Task<List<PersonResponse>> GetAllPersons();
         /// <summary>
@@ -21,13 +20,6 @@ namespace ServiceContracts
         Task<PersonResponse?> GetPersonByPersonId(Guid? personId);
 
         Task<List<PersonResponse>> GetPersonsByFilter(string? filterBy, string? filterSearch);
-
-        List<PersonResponse> GetSortedPersons(List<PersonResponse> personsToOrder, string sortBy, SortOrderOptions sortOrder );
-
-        Task<PersonResponse> UpdatePerson(PersonUpdateRequest? personUpdateRequest);
-
-        Task<bool> DeletePerson(Guid? personId);
-
         Task<MemoryStream> GetPersonsCSV();
         Task<MemoryStream> GetPersonsXlsx();
 

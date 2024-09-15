@@ -18,14 +18,27 @@ namespace CRUDDemo.Controllers
     //[TypeFilter(typeof(HandleExceptionFilter))]
     public class PersonsController : Controller
     {
-        private readonly IPersonsService _personsService;
+        private readonly IPersonsGetterService _personsGetterService;
+        private readonly IPersonsAdderService _personsAdderService;
+        private readonly IPersonsDeleterService _personsDeleterService;
+        private readonly IPersonsSorterService _personsSorterService;
+        private readonly IPersonsUpdaterService _personsUpdaterService;
         private readonly ICountriesService _countriesService;
         private readonly ILogger<PersonsController> _logger;
 
 
-        public PersonsController(IPersonsService personsService, ICountriesService countriesService, ILogger<PersonsController> logger)
+        public PersonsController(IPersonsGetterService personsGetterService,
+            IPersonsAdderService personsAdderService,
+            IPersonsDeleterService personsDeleterService,
+            IPersonsSorterService personsSorterService,
+            IPersonsUpdaterService personsUpdaterService,
+            ICountriesService countriesService, ILogger<PersonsController> logger)
         {
-            _personsService = personsService;
+            _personsGetterService = personsGetterService;
+            _personsAdderService = personsAdderService;
+            _personsDeleterService = personsDeleterService;
+            _personsSorterService = personsSorterService;
+            _personsUpdaterService = personsUpdaterService;
             _countriesService = countriesService;
             _logger = logger;
         }
@@ -53,12 +66,12 @@ namespace CRUDDemo.Controllers
             //ViewBag.CurrentSortBy = sortBy;
             //ViewBag.CurrentSortOrder = sortOrder;
 
-                List<PersonResponse> persons = await _personsService.GetPersonsByFilter(filterBy, filterSearch);
+                List<PersonResponse> persons = await _personsGetterService.GetPersonsByFilter(filterBy, filterSearch);
 
             
 
 
-            List<PersonResponse> sortedPersons = _personsService.GetSortedPersons(persons, sortBy, sortOrder);
+            List<PersonResponse> sortedPersons = _personsSorterService.GetSortedPersons(persons, sortBy, sortOrder);
 
             return View(sortedPersons);
         }
@@ -67,7 +80,7 @@ namespace CRUDDemo.Controllers
         [Route("[action]")]
         public async Task<IActionResult> PersonsPdf()
         {
-            IEnumerable<PersonResponse> persons = await _personsService.GetAllPersons();
+            IEnumerable<PersonResponse> persons = await _personsGetterService.GetAllPersons();
             return new ViewAsPdf("PersonsPDF", persons, ViewData) { 
                 PageOrientation = Rotativa.AspNetCore.Options.Orientation.Landscape,
             };
@@ -100,7 +113,7 @@ namespace CRUDDemo.Controllers
                 return View(person);
             }
 
-            await _personsService.AddPerson(person);
+            await _personsAdderService.AddPerson(person);
 
             return RedirectToAction("Index", "Persons");
         }
@@ -114,7 +127,7 @@ namespace CRUDDemo.Controllers
         {
             List<CountryResponse> countryResponses = await _countriesService.GetListCountries();
             ViewBag.ListCountry = countryResponses.Select(c => new SelectListItem() { Text = c.CountryName, Value = c.CountryId.ToString() });
-            PersonResponse? person = await _personsService.GetPersonByPersonId(personId);
+            PersonResponse? person = await _personsGetterService.GetPersonByPersonId(personId);
             PersonUpdateRequest? updatePerson = person?.ToPersonUpdateRequest();
             return View(updatePerson);
         }
@@ -138,7 +151,7 @@ namespace CRUDDemo.Controllers
                 return View(person);
             }
 
-            await _personsService.UpdatePerson(person);
+            await _personsUpdaterService.UpdatePerson(person);
 
             return RedirectToAction("Index","Persons");
         }
@@ -147,7 +160,7 @@ namespace CRUDDemo.Controllers
         [Route("[action]/{personId}")]
         public async Task<IActionResult> Delete(Guid personId) {
 
-            PersonResponse? person = await _personsService.GetPersonByPersonId(personId);
+            PersonResponse? person = await _personsGetterService.GetPersonByPersonId(personId);
             if(person == null)
             {
                 return RedirectToAction("index", "persons");
@@ -160,7 +173,7 @@ namespace CRUDDemo.Controllers
         [HttpPost]
         [Route("[action]/{personId}")]
         public async Task<IActionResult> Delete(PersonUpdateRequest person) {
-            bool isDeleted = await _personsService.DeletePerson(person.PersonId);
+            bool isDeleted = await _personsDeleterService.DeletePerson(person.PersonId);
             if (!isDeleted) {
                 return BadRequest("deleted person was failed!");
             }
@@ -173,7 +186,7 @@ namespace CRUDDemo.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetPersonsCSV()
         {
-            MemoryStream memoryStream =  await _personsService.GetPersonsCSV();
+            MemoryStream memoryStream =  await _personsGetterService.GetPersonsCSV();
             return File(memoryStream, "text/csv", "persons.csv");
         }
 
@@ -182,7 +195,7 @@ namespace CRUDDemo.Controllers
         [Route("[action]")]
         public async Task<IActionResult> GetPersonsXlsx()
         {
-            MemoryStream memoryStream = await _personsService.GetPersonsXlsx();
+            MemoryStream memoryStream = await _personsGetterService.GetPersonsXlsx();
             return File(memoryStream, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "persons.xlsx");
         }
 
